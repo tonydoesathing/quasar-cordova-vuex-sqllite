@@ -1,3 +1,7 @@
-export function updateMeow(context, payload) {
-  context.commit('updateMeow', payload);
+
+export function addPost(context, post) {
+  return new Promise((resolve) => {
+    context.commit('addPost', post);
+    resolve();
+  });
 }

@@ -1,16 +1,21 @@
 <template>
-  <q-layout>
+  <q-layout view="hHh lpr fFf">
     <q-header elevated>
       <q-toolbar>
         <q-toolbar-title>
-          {{meow}}
+          Quasar-Cordova-Vuex-SQLLite
         </q-toolbar-title>
+        <q-btn color="secondary" round dense icon="add" @click="$router.push('addpost')"/>
       </q-toolbar>
     </q-header>
     <q-page-container>
-      <q-page class="flex flex-center">
-        <img alt="Quasar logo" src="~assets/quasar-logo-full.svg">
-        <button @click="update()">CLICK</button>
+      <q-page class="q-pa-md">
+        <div class="row" v-for="(post, index) in posts" :key="index">
+          {{post}}
+        </div>
+        <div class="row">
+          <button @click="update()">CLICK</button>
+        </div>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -23,20 +28,20 @@
 import { openURL } from 'quasar';
 
 export default {
-  name: 'PageIndex',
+  name: 'Home',
   data() {
     return {
     };
   },
   computed: {
-    meow() {
-      return this.$store.state.db.meow;
+    posts() {
+      return this.$store.state.db.posts;
     },
   },
   methods: {
     openURL,
     update() {
-      this.$store.dispatch('db/updateMeow', 'lol');
+      this.$store.dispatch('db/addPost', 'lol');
     },
   },
 };

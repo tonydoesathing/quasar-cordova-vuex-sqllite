@@ -1,4 +1,4 @@
 
-export function updateMeow(state, payload) {
-  state.meow = payload;
+export function addPost(state, post) {
+  state.posts.push(post);
 }

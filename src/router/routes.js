@@ -4,6 +4,10 @@ const routes = [
     path: '/',
     component: () => import('pages/Index.vue'),
   },
+  {
+    path: '/addpost',
+    component: () => import('pages/addPost.vue'),
+  },
 ];
 
 // Always leave this as last one
