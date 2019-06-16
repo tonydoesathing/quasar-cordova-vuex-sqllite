@@ -44,5 +44,15 @@ export default {
       this.$store.dispatch('db/addPost', 'lol');
     },
   },
+  mounted() {
+    if (!this.$store.state.db.startupLoaded) {
+      this.$store.dispatch('db/startup').then(() => {
+        console.log('started');
+        this.$store.dispatch('db/morePosts').then(() => {
+          console.log('added posts');
+        });
+      });
+    }
+  },
 };
 </script>
