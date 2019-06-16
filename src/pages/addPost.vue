@@ -11,7 +11,9 @@
     <q-page-container>
       <q-page class="q-pa-md">
         <q-input v-model="postText" label="Post Text" />
-        <q-btn color="secondary" round dense icon="add" @click="addPost()"/>
+        <div class="row q-pa-md float-right">
+          <q-btn color="secondary" round icon="add" @click="addPost()"/>
+        </div>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -29,6 +31,7 @@ export default {
     addPost() {
       this.$store.dispatch('db/addPost', this.postText).then(() => {
         this.postText = '';
+        this.$router.go(-1);
       });
     },
   },
