@@ -3,8 +3,9 @@ import { newPromiseHelper } from 'sql-promise-helper';
 export function addPost(context, post) {
   return new Promise((resolve, reject) => {
     if (context.state.startupLoaded) {
-      const insertPostQuery = 'INSERT INTO posts (post, datecreated) VALUES (?,?)';
-      context.state.database.executeStatement(insertPostQuery, [post, Date.now()])
+      const insertPostQuery = 'INSERT INTO posts (post, tags, datecreated) VALUES (?,?,?)';
+      context.state.database.executeStatement(insertPostQuery,
+        [post.post, JSON.stringify(post.tags), Date.now()])
         .then((result) => {
           console.log(result);
           context.commit('addPost', post);
@@ -16,6 +17,34 @@ export function addPost(context, post) {
     } else {
       reject('DB not loaded');
     }
+  });
+}
+
+/* export function addNumber(context, id) {
+  return new Promise((resolve, reject) => {
+    context.state.database.executeStatement(`SELECT * FROM posts, json_each(posts.numbers) WHERE json_each.value='5'`, null)
+  });
+} */
+
+export function getWordsWithFive(context) {
+  return new Promise((resolve, reject) => {
+    context.state.database.executeStatement("SELECT * FROM posts, json_each(posts.tags) WHERE json_valid(posts.tags) AND json_each.value='wow'", null)
+      .then((result) => {
+        console.log(result);
+        const posts = [];
+        for (let i = 0; i < result.rows.length; i += 1) {
+          const newPost = {
+            post: result.rows.item(i).post,
+            tags: JSON.parse(result.rows.item(i).tags),
+          };
+          posts.push(newPost);
+          console.log(result.rows.item(i));
+        }
+        resolve(posts);
+      }, (err) => {
+        console.log('Error occurred while selecting');
+        reject(err);
+      });
   });
 }
 
@@ -44,7 +73,12 @@ export function morePosts(context, offset) {
         .then((result) => {
           console.log(result);
           for (let i = 0; i < result.rows.length; i += 1) {
-            context.commit('addPost', result.rows.item(i).post);
+            console.log(result.rows.item(i));
+            const newPost = {
+              post: result.rows.item(i).post,
+              tags: JSON.parse(result.rows.item(i).tags),
+            };
+            context.commit('addPost', newPost);
             console.log(result.rows.item(i));
           }
           resolve();
@@ -68,7 +102,9 @@ export function startup(context) {
       (database) => {
         const helper = newPromiseHelper(database);
         context.commit('setDatabase', helper);
-        helper.executeStatement('CREATE TABLE IF NOT EXISTS posts (id integer primary key, post text, datecreated integer)')
+        // helper.executeStatement('DROP TABLE IF EXISTS posts')
+        // .then(() => {
+        helper.executeStatement('CREATE TABLE IF NOT EXISTS posts (id integer primary key, post text, tags JSON, datecreated integer)')
           .then(() => {
             console.log('table created successfully');
 
@@ -79,6 +115,7 @@ export function startup(context) {
             console.log('Error occurred while creating the table.');
             reject(err);
           });
+        // });
       },
       (err) => {
         reject(err);

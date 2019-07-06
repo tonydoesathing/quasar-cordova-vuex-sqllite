@@ -11,10 +11,17 @@
     <q-page-container>
       <q-page class="q-pa-md">
         <div class="row" v-for="(post, index) in posts" :key="index">
-          {{post}}
+          <h2>{{post.post}}</h2>
+          <h3 v-for="(tag, i) in post.tags" :key="i">{{tag}}</h3>
+
         </div>
         <div class="row">
           <button @click="update()">CLICK</button>
+          <button @click="showFives()">Show fives</button>
+          <div class="row" v-for="(post, index) in fives" :key="index">
+            <h2>{{post.post}}</h2>
+            <h3 v-for="(tag, i) in post.tags" :key="i">{{tag}}</h3>
+          </div>
         </div>
       </q-page>
     </q-page-container>
@@ -31,6 +38,7 @@ export default {
   name: 'Home',
   data() {
     return {
+      fives: [],
     };
   },
   computed: {
@@ -42,6 +50,12 @@ export default {
     openURL,
     update() {
       this.$store.dispatch('db/addPost', 'lol');
+    },
+    showFives() {
+      this.$store.dispatch('db/getWordsWithFive').then((posts) => {
+        console.log(posts);
+        this.fives = posts;
+      });
     },
   },
   mounted() {

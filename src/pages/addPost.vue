@@ -11,6 +11,11 @@
     <q-page-container>
       <q-page class="q-pa-md">
         <q-input v-model="postText" label="Post Text" />
+        <q-select
+          label="Tags"
+          v-model="tags"
+          use-chips
+          multiple/>
         <div class="row q-pa-md float-right">
           <q-btn color="secondary" round icon="add" @click="addPost()"/>
         </div>
@@ -25,12 +30,18 @@ export default {
   data() {
     return {
       postText: '',
+      tags: ['wow', 'lol', 'hamster'],
     };
   },
   methods: {
     addPost() {
-      this.$store.dispatch('db/addPost', this.postText).then(() => {
+      const post = {
+        post: this.postText,
+        tags: this.tags,
+      };
+      this.$store.dispatch('db/addPost', post).then(() => {
         this.postText = '';
+        this.tags = [];
         this.$router.go(-1);
       });
     },
