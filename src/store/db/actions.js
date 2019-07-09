@@ -96,7 +96,8 @@ export function startup(context) {
   return new Promise((resolve, reject) => {
     document.addEventListener('deviceready', () => {
       window.sqlitePlugin.openDatabase({
-        name: 'posts.db',
+        name: 'posts2.db',
+        key: 'password',
         location: 'default',
       },
       (database) => {
